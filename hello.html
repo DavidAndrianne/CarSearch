@@ -1,13 +1,52 @@
 <html>
 <head>
 	<title>My angular app</title>
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-resource.min.js"></script>
 	<script src="mainApp.js"></script>
 </head>
 <body data-ng-app="ng-main">
-	<div>
-		{{'hello world!'}}
+	<div data-ng-controller="mainCtrl">
+		<h1>Quandl database browser </h1>
+		<div class="form-group">
+			<label>Search</label>
+			<input type="text" data-ng-model="query_databases" class="form-control" placeholder="stock..."/>
+			<button data-ng-click="updateTable()" class="btn btn-primary">Search</button>
+		</div>
+		<div class="col col-md-6" data-ng-show="databases">
+			<h2>Found databases</h2>
+			<span class="alert alert-info"> ({{(databases | filter : {premium: filterPremium}).length}} shown) </span>
+			<label>Premium content</label>
+			<input type="checkbox" data-ng-model="filterPremium"></input>
+			<table class="table table-striped">
+				<tr>
+					<th>Icon</th>
+					<th>name</th>
+					<th>datasets_count</th>
+					<th>downloads</th>
+					<th>Inspect</th>
+				</tr>
+				<tr data-ng-repeat="database in databases | filter : {premium: filterPremium} | orderBy : '-downloads'">
+					<td>
+						<img data-ng-src="{{database.image}}" style="width: 20px; height: 20px;"/>
+					</td>
+					<td>{{database.name}}</td>
+					<td>{{database.datasets_count}}</td>
+					<td>{{database.downloads}}</td>
+					<td>
+						<button data-ng-click="viewDatabase(database)" class="btn btn-info">Inspect</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col col-md-6" data-ng-show="detailDB">
+			<img data-ng-src="{{detailDB.image}}" style="float: left"/>
+			<h2>{{detailDB.name}} <span class="badge badge-success" data-ng-show="detailDB.premium">Premium</span></h2>
+			<p>{{detailDB.description}}</p>
+		</div>
 	</div>
 </body>
 </html>
