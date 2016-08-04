@@ -1,0 +1,24 @@
+<html>
+<head>
+	<title>AT&T Trending</title>
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-resource.min.js"></script>
+	<script src="Chart.js"></script>
+	<script src="angular-chart.min.js"></script>
+	<script src="AttTrendingApp.js"></script>
+</head>
+<body data-ng-app="ng-main">
+	<div data-ng-controller="attTrendingCtrl">
+		<h1>AT&T trending</h1>
+		<div id="chartContainer" style="width:1000px; height:800px;">
+			<canvas id="line" class="chart chart-line" chart-data="data"
+				chart-labels="labels" chart-series="series" chart-options="options"
+				chart-dataset-override="datasetOverride" chart-click="onClick"
+			</canvas> 
+		</div>
+	</div>
+</body>
+</html>
