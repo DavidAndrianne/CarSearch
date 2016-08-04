@@ -23,16 +23,12 @@
 			<input type="checkbox" data-ng-model="filterPremium"></input>
 			<table class="table table-striped">
 				<tr>
-					<th>Icon</th>
 					<th>name</th>
 					<th>datasets_count</th>
 					<th>downloads</th>
 					<th>Inspect</th>
 				</tr>
 				<tr data-ng-repeat="database in databases | filter : {premium: filterPremium} | orderBy : '-downloads'">
-					<td>
-						<img data-ng-src="{{database.image}}" style="width: 20px; height: 20px;"/>
-					</td>
 					<td>{{database.name}}</td>
 					<td>{{database.datasets_count}}</td>
 					<td>{{database.downloads}}</td>
@@ -46,6 +42,10 @@
 			<img data-ng-src="{{detailDB.image}}" style="float: left"/>
 			<h2>{{detailDB.name}} <span class="badge badge-success" data-ng-show="detailDB.premium">Premium</span></h2>
 			<p>{{detailDB.description}}</p>
+			<div class="form-group">
+				<input type="text" data-ng-model="datasetQuery" class="form-control" placeholder="AT&T..."/>
+				<button data-ng-click="redirect('https://www.quandl.com/api/v3/datasets?database_code=' + detailDB.name + '&per_page=100&query=' + datasetQuery)" class="btn btn-primary">Search</button>
+			</div>
 		</div>
 	</div>
 </body>
