@@ -15,49 +15,92 @@
 	// Add angular controller 'mainCtrl'
 	app.controller('attTrendingCtrl', function($scope, att, api_key){
 		//init values
-		var today = new Date();
-		$scope.date = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-		att.get({start_date : $scope.date, api_key: api_key}, function(result){
-			$scope.db = result.dataset;
-			$scope.labels = [/*"January", "February", "March", "April", "May", "June", "July"*/];
-			  $scope.series = ['AT&T closing prices'/*, 'Series B'*/];
-			  $scope.data = [
-			  []
-				/*[65, 59, 80, 81, 56, 55, 40],
-				[28, 48, 40, 19, 86, 27, 90]*/
-			  ];
-			  $scope.onClick = function (points, evt) {
-				console.log(points, evt);
-			  };
-			  $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-			  $scope.options = {
-				scales: {
-				  yAxes: [
-					{
-					  id: 'y-axis-1',
-					  type: 'linear',
-					  display: true,
-					  position: 'left'
-					},
-					{
-					  id: 'y-axis-2',
-					  type: 'linear',
-					  display: true,
-					  position: 'right'
+		$scope.startdate = new Date();
+		$scope.datarange = "D";
+		
+		$scope.updateGraph = function(){
+			$scope.date = $scope.startdate.getFullYear() + '-' + $scope.startdate.getMonth() + '-' + $scope.startdate.getDate();
+			att.get({start_date : $scope.date, api_key: api_key}, function(result){
+				$scope.db = result.dataset;
+				$scope.labels = [];
+				$scope.series = ['Closing value', 'Low value', 'High value'];
+				$scope.data = [
+					[], // closing stock value
+					[], // low stock value
+					[] // high stock value
+				];
+				$scope.onClick = function (points, evt) {
+					console.log(points, evt);
+				};
+				$scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
+				$scope.options = {
+					scales: {
+					  yAxes: [
+						{
+						  id: 'y-axis-1',
+						  type: 'linear',
+						  display: true,
+						  position: 'left'
+						},
+						{
+						  id: 'y-axis-2',
+						  type: 'linear',
+						  display: true,
+						  position: 'right'
+						}
+					  ]
 					}
-				  ]
+				};
+				
+				// Loop through data of each date
+				switch ($scope.datarange) {
+					// Simple iteration for each day
+					case "D" : 
+						for(var i = 0; i < result.dataset.data.length; i++){
+							var arr = result.dataset.data[i];
+							var date = arr[0];
+							var highPrice = arr[2];
+							var lowPrice = arr[3];
+							var closingPrice = arr[4];
+							addEntryToGraph(date, closingPrice, lowPrice, highPrice);
+						}
+						break;
+					// Aggregated iteration per month
+					case "M" :
+						var currentMonth, currentMonthItems;
+						var highPrice, lowPrice, closingPrice;
+						for(var i = 0; i < result.dataset.data.length; i++){
+							var arr = result.dataset.data[i];
+							var date = new Date(arr[0]);
+							currentMonth = currentMonth || date.getFullYear() + "-" + date.getMonth(); // if first loop, then take month of currentDate
+							
+							// if last item for this month, add data into graph
+							if(date.getFullYear() + "-" + date.getMonth() != currentMonth){
+								addEntryToGraph(currentMonth, closingPrice/currentMonthItems, lowPrice/currentMonthItems, highPrice/currentMonthItems);
+								currentMonth = date.getFullYear() + "-" + date.getMonth(), currentMonthItems = 0;
+								highPrice = 0, lowPrice = 0, closingPrice = 0;
+							}
+							
+							// add prices to sum
+							highPrice += arr[2];
+							lowPrice += arr[3];
+							closingPrice += arr[4];
+							currentMonthItems++;
+							
+							if(i+1 == result.dataset.data.length) // If last item
+								addEntryToGraph(currentMonth, closingPrice/currentMonthItems, lowPrice/currentMonthItems, highPrice/currentMonthItems);
+						}
+						break;
 				}
-			  };
-			
-			// Loop through data
-			for(var i = 0; i < result.dataset.data.length; i++){
-				var arr = result.dataset.data[i];
-				var date = arr[0];
-				var closingPrice = arr[4];
-				$scope.labels.push(date); // Add the date to our x-axis
-				$scope.data[0].push(closingPrice); // Add the closing price for this date
-			}
-			console.log($scope.chartdatasource.dataset[0].data);
-		});
+			})
+		};
+		$scope.updateGraph();
+		
+		function addEntryToGraph(label, closingPrice, lowPrice, highPrice){
+			$scope.labels.push(label); // Add the date to our x-axis
+			$scope.data[0].push(closingPrice); // Add the closing price for this date
+			$scope.data[1].push(lowPrice); // Add the low price for this date
+			$scope.data[2].push(highPrice); // Add the high price for this date
+		}
 	});
 })();

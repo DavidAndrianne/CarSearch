@@ -13,11 +13,36 @@
 <body data-ng-app="ng-main">
 	<div data-ng-controller="attTrendingCtrl">
 		<h1>AT&T trending</h1>
-		<div id="chartContainer" style="width:1000px; height:800px;">
-			<canvas id="line" class="chart chart-line" chart-data="data"
-				chart-labels="labels" chart-series="series" chart-options="options"
-				chart-dataset-override="datasetOverride" chart-click="onClick"
-			</canvas> 
+		<div class="col-lg-8">
+			<div class="form-input">
+				<label>Startdate</label>
+				<input class="form-control" type="date" data-ng-model="startdate" data-ng-change="updateGraph()"/>
+			</div>
+			<div id="chartContainer">
+				<canvas id="line" class="chart chart-line" chart-data="data"
+					chart-labels="labels" chart-series="series" chart-options="options"
+					chart-dataset-override="datasetOverride" chart-click="onClick"
+				</canvas> 
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="form-input">
+				<label>Granularity</label>
+				<div class="radio">
+					<label>
+						<input type="radio" name="datarange" value="D" data-ng-model="datarange" data-ng-change="updateGraph()"/> 
+						Daily
+					</label>
+				</div>
+				<div class="radio">
+					<label>
+						<input type="radio" name="datarange" value="M" data-ng-model="datarange" data-ng-change="updateGraph()"/> 
+						Monthly
+					</label>
+				</div>
+				<!--<input type="radio" name="datarange" value="Q" data-ng-model="datarange" data-ng-change="updateGraph()"/> Quarterly
+				<input type="radio" name="datarange" value="A" data-ng-model="datarange" data-ng-change="updateGraph()"/> Annually-->
+			</div>
 		</div>
 	</div>
 </body>
